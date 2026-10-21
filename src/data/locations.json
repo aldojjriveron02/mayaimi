@@ -1,0 +1,67 @@
+{
+  "locations": [
+    {
+      "id": "vizcaya-hollow",
+      "name": "Vizcaya Hollow",
+      "type": "start",
+      "region": "Glades",
+      "cx": 16,
+      "cy": 20,
+      "description": "Safe Glades pocket. Starting hangar. Camera start."
+    },
+    {
+      "id": "aldos-landing",
+      "name": "Aldo's Landing",
+      "type": "port",
+      "region": "Borderlands",
+      "cx": 42,
+      "cy": 28,
+      "description": "First port. Borderlands trading post."
+    },
+    {
+      "id": "wrecked-skiff",
+      "name": "Wrecked Vizcaya Skiff",
+      "type": "salvage",
+      "region": "Glades",
+      "cx": 22,
+      "cy": 24,
+      "description": "First scavenge location (minutes 3–5)."
+    },
+    {
+      "id": "wind-current-1",
+      "name": "Glades–Landing Current",
+      "type": "wind",
+      "region": "Borderlands",
+      "cx": 30,
+      "cy": 24,
+      "description": "Wind current used in minutes 5–7 and 28–35."
+    },
+    {
+      "id": "egg-clue-area",
+      "name": "Egg Clue Clearing",
+      "type": "story",
+      "region": "Glades",
+      "cx": 28,
+      "cy": 32,
+      "description": "Ledger clue destination. Not the egg itself."
+    },
+    {
+      "id": "timber-stand",
+      "name": "Timber Stand",
+      "type": "resource",
+      "region": "Glades",
+      "cx": 18,
+      "cy": 28,
+      "description": "Timber for sloop parts."
+    },
+    {
+      "id": "iron-outcrop",
+      "name": "Iron Outcrop",
+      "type": "resource",
+      "region": "Glades",
+      "cx": 24,
+      "cy": 30,
+      "description": "Iron for sloop parts."
+    }
+  ]
+}
