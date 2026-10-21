@@ -20,6 +20,7 @@ export class WorldMap extends Phaser.Scene {
 
   preload() {
     this.load.json('regions', 'src/data/regions.json');
+    this.load.json('locations', 'src/data/locations.json');
     this.load.json('colors', 'src/data/colors.json');
     this.load.json('text', 'src/data/text.json');
     this.load.json('first15', 'src/data/first15.json');
@@ -27,6 +28,7 @@ export class WorldMap extends Phaser.Scene {
 
   create() {
     const regions = this.cache.json.get('regions');
+    const locations = this.cache.json.get('locations');
     const colors = this.cache.json.get('colors');
     const text = this.cache.json.get('text');
     // Debug hook for automated verification (used by build-task tests).
@@ -68,7 +70,12 @@ export class WorldMap extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, MW, MH);
     cam.setOrigin(0, 0); // zoom from top-left: (0,0) screen = (0,0) world
-    cam.centerOn(MW / 2, MH / 2);
+    // Camera starts at Vizcaya Hollow (the captain's home), not the map center.
+    // Location comes from src/data/locations.json (cx/cy are tile coords).
+    const hollow = (locations.locations || []).find((l) => l.id === 'vizcaya-hollow');
+    const startX = hollow ? hollow.cx * T + T / 2 : MW / 2;
+    const startY = hollow ? hollow.cy * T + T / 2 : MH / 2;
+    cam.centerOn(startX, startY);
     cam.setZoom(DPR);
     const controls = addCameraControls(this, cam, { minZoom: 0.4 * DPR, maxZoom: 3.0 * DPR });
     controls.setBounds({ x: 0, y: 0, w: MW, h: MH });
