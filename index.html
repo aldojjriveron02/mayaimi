@@ -35,6 +35,13 @@
 <body>
 <div id="game"></div>
 <div id="rotateHint">🔄<br><br>Rotate your phone<br>to play Mayaimi in landscape.</div>
+<script>
+// Automated-test bypass: ?uitest hides the rotate hint so the game can be
+// exercised in any viewport. Invisible in normal use.
+if (new URLSearchParams(location.search).has('uitest')) {
+  document.getElementById('rotateHint').style.display = 'none';
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
 <script type="module" src="src/main.js"></script>
 </body>
