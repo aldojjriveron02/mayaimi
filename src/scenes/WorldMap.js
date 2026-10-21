@@ -1,5 +1,6 @@
 import { GameClock } from '../systems/clock.js';
 import { addCameraControls } from '../systems/cameraControls.js';
+import { HUD } from './HUD.js';
 
 /** Deterministic PRNG so the placeholder map is stable. */
 function mulberry32(seed) {
@@ -64,6 +65,8 @@ export class WorldMap extends Phaser.Scene {
     this.clock = new GameClock();
 
     // --- HUD: interface layer on top, own camera, never zooms/scrolls ---
+    // (registered here so the SceneManager knows the HUD class)
+    if (!this.scene.get('HUD')) this.scene.add('HUD', HUD, false);
     this.scene.launch('HUD', { clock: this.clock });
   }
 
