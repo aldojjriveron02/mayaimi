@@ -22,6 +22,9 @@ export class WorldMap extends Phaser.Scene {
 
   create() {
     const regions = this.cache.json.get('regions');
+    // Debug hook for automated verification (used by build-task tests).
+    window.__mayaimi = window.__mayaimi || {};
+    window.__mayaimi.scene = this;
     const T = regions.tileSize;
     const MW = regions.width * T, MH = regions.height * T;
 
