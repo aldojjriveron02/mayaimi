@@ -1,0 +1,33 @@
+{
+  "thresholds": {
+    "loyal": { "min": 70, "max": 100, "label": "Loyal", "color": "#3ecfbf" },
+    "steady": { "min": 40, "max": 69, "label": "Steady", "color": "#f4d35e" },
+    "uneasy": { "min": 15, "max": 39, "label": "Uneasy", "color": "#ee6c4d" },
+    "hostile": { "min": 0, "max": 14, "label": "Hostile", "color": "#9b2226" }
+  },
+  "gains": {
+    "fair_pay": 8,
+    "generous_pay": 15,
+    "shared_win": 6,
+    "on_time_wages": 4,
+    "profit_cut": 5
+  },
+  "losses": {
+    "unpaid_wages": -12,
+    "reckless_risk": -8,
+    "hot_cargo_no_cut": -10,
+    "ignored": -5
+  },
+  "chispa": {
+    "dragon_blow_multiplier": 1.5,
+    "starting_loyalty": {
+      "generous": 70,
+      "fair": 50,
+      "cheap": 35
+    }
+  },
+  "skill_modifier": {
+    "negative_reduction": 0.25,
+    "positive_bonus": 0.1
+  }
+}
