@@ -60,6 +60,7 @@ export class WorldMap extends Phaser.Scene {
     // but drawn at full device-pixel density. Pinch multiplies on top.
     const cam = this.cameras.main;
     cam.setBounds(0, 0, MW, MH);
+    cam.setOrigin(0, 0); // zoom from top-left: (0,0) screen = (0,0) world
     cam.centerOn(MW / 2, MH / 2);
     cam.setZoom(DPR);
     const controls = addCameraControls(this, cam, { minZoom: 0.4 * DPR, maxZoom: 3.0 * DPR });
@@ -68,6 +69,7 @@ export class WorldMap extends Phaser.Scene {
     // Keep the camera viewport matched to the canvas on resize/rotation.
     this.scale.on('resize', (gameSize) => {
       cam.setViewport(0, 0, gameSize.width, gameSize.height);
+      cam.setOrigin(0, 0);
       controls.refresh();
     });
 

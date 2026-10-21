@@ -45,7 +45,9 @@ export class HUD extends Phaser.Scene {
     window.__mayaimi.hud = this;
 
     // HUD camera: DPR zoom -> layout in screen points, drawn at device pixels.
+    // Origin (0,0): the visible area starts at the top-left, where HUD items live.
     this.cameras.main.setZoom(DPR);
+    this.cameras.main.setOrigin(0, 0);
 
     const labelStyle = {
       fontFamily: 'monospace', fontSize: '16px', color: '#ffe9b0',
@@ -65,6 +67,7 @@ export class HUD extends Phaser.Scene {
     this.scale.on('resize', (gameSize) => {
       this.cameras.main.setViewport(0, 0, gameSize.width, gameSize.height);
       this.cameras.main.setZoom(DPR);
+      this.cameras.main.setOrigin(0, 0);
       this.layout();
     });
 
