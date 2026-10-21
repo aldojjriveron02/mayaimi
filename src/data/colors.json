@@ -1,0 +1,1 @@
+{"hud":{"clockText":"#ffe9b0","hintText":"#cfe3c0","labelBackground":"rgba(0,0,0,0.55)","renderText":"#9fd8a8","subLabelBackground":"rgba(0,0,0,0.45)"},"map":{"dirt":"#9a7b4f","grass":["#5d8a4a","#548142","#639254","#4f7d3e"],"gridLine":"#000000","gridLineAlpha":0.08,"lake":"#3f7fbf"}}

@@ -37,6 +37,10 @@ export class HUD extends Phaser.Scene {
 
   init(data) {
     this.gameClock = data.clock; // read-only: HUD never writes time
+    // UI colors + strings live in src/data (single source of truth),
+    // passed via launch data from WorldMap.
+    this.uiColors = data.colors;
+    this.uiText = data.text;
   }
 
   create() {
@@ -49,18 +53,19 @@ export class HUD extends Phaser.Scene {
     this.cameras.main.setZoom(DPR);
     this.cameras.main.setOrigin(0, 0);
 
+    const c = this.uiColors, t = this.uiText;
     const labelStyle = {
-      fontFamily: 'monospace', fontSize: '16px', color: '#ffe9b0',
-      backgroundColor: 'rgba(0,0,0,0.55)', padding: { x: 8, y: 6 }
+      fontFamily: 'monospace', fontSize: '16px', color: c.clockText,
+      backgroundColor: c.labelBackground, padding: { x: 8, y: 6 }
     };
     this.clockLabel = this.add.text(0, 0, '', labelStyle).setResolution(DPR).setDepth(100);
     this.renderLabel = this.add.text(0, 0, '', {
-      fontFamily: 'monospace', fontSize: '12px', color: '#9fd8a8',
-      backgroundColor: 'rgba(0,0,0,0.45)', padding: { x: 8, y: 5 }
+      fontFamily: 'monospace', fontSize: '12px', color: c.renderText,
+      backgroundColor: c.subLabelBackground, padding: { x: 8, y: 5 }
     }).setResolution(DPR).setDepth(100);
-    this.hint = this.add.text(0, 0, 'Drag to pan · Pinch to zoom', {
-      fontFamily: 'monospace', fontSize: '13px', color: '#cfe3c0',
-      backgroundColor: 'rgba(0,0,0,0.45)', padding: { x: 8, y: 6 }
+    this.hint = this.add.text(0, 0, t.hint, {
+      fontFamily: 'monospace', fontSize: '13px', color: c.hintText,
+      backgroundColor: c.subLabelBackground, padding: { x: 8, y: 6 }
     }).setResolution(DPR).setDepth(100);
 
     this.layout();
@@ -82,9 +87,8 @@ export class HUD extends Phaser.Scene {
     this.renderLabel.setPosition(12 + s.left, 52 + s.top);
     this.hint.setPosition(12 + s.left, 84 + s.top);
     // Live proof of the render scale: canvas device pixels / CSS pixels.
-    const c = this.game.canvas;
-    const n = c.width / (c.clientWidth || 1);
-    this.renderLabel.setText('Render: ' + n.toFixed(1) + 'x');
+    const n = this.game.canvas.width / (this.game.canvas.clientWidth || 1);
+    this.renderLabel.setText(this.uiText.renderPrefix + n.toFixed(1) + this.uiText.renderSuffix);
     this._lastMin = -1; // force a redraw after layout
   }
 
@@ -92,7 +96,7 @@ export class HUD extends Phaser.Scene {
     const m = this.gameClock.gameMinutes;
     if (m !== this._lastMin) {
       this._lastMin = m;
-      this.clockLabel.setText('🕐 ' + this.gameClock.format());
+      this.clockLabel.setText(this.uiText.clockPrefix + this.gameClock.format());
     }
   }
 }

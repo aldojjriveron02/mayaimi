@@ -20,10 +20,15 @@ export class WorldMap extends Phaser.Scene {
 
   preload() {
     this.load.json('regions', 'src/data/regions.json');
+    this.load.json('colors', 'src/data/colors.json');
+    this.load.json('text', 'src/data/text.json');
+    this.load.json('first15', 'src/data/first15.json');
   }
 
   create() {
     const regions = this.cache.json.get('regions');
+    const colors = this.cache.json.get('colors');
+    const text = this.cache.json.get('text');
     // Debug hook for automated verification (used by build-task tests).
     window.__mayaimi = window.__mayaimi || {};
     window.__mayaimi.scene = this;
@@ -31,8 +36,10 @@ export class WorldMap extends Phaser.Scene {
     const MW = regions.width * T, MH = regions.height * T;
 
     // --- Placeholder map: one Graphics object, colored tiles ---
+    // Colors live in src/data/colors.json (single source of truth).
+    const hex = (s) => parseInt(s.replace('#', ''), 16);
     const rand = mulberry32(20261020);
-    const grass = [0x5d8a4a, 0x548142, 0x639254, 0x4f7d3e];
+    const grass = colors.map.grass.map(hex);
     const g = this.add.graphics();
 
     const inEllipse = (tx, ty, f) => {
@@ -45,12 +52,12 @@ export class WorldMap extends Phaser.Scene {
         let color = grass[Math.floor(rand() * grass.length)];
         for (const f of regions.features) {
           if (!inEllipse(tx, ty, f)) continue;
-          if (f.type === 'lake') color = 0x3f7fbf;
-          else if (f.type === 'dirt') color = 0x9a7b4f;
+          if (f.type === 'lake') color = hex(colors.map.lake);
+          else if (f.type === 'dirt') color = hex(colors.map.dirt);
         }
         g.fillStyle(color, 1);
         g.fillRect(tx * T, ty * T, T, T);
-        g.lineStyle(1, 0x000000, 0.08);
+        g.lineStyle(1, hex(colors.map.gridLine), colors.map.gridLineAlpha);
         g.strokeRect(tx * T, ty * T, T, T);
       }
     }
@@ -78,8 +85,9 @@ export class WorldMap extends Phaser.Scene {
 
     // --- HUD: interface layer on top, own camera, never zooms/scrolls ---
     // (registered here so the SceneManager knows the HUD class)
+    // HUD colors + strings come from the data files, passed via launch data.
     if (!this.scene.get('HUD')) this.scene.add('HUD', HUD, false);
-    this.scene.launch('HUD', { clock: this.clock });
+    this.scene.launch('HUD', { clock: this.clock, colors: colors.hud, text: text.hud });
   }
 
   update(_time, delta) {
