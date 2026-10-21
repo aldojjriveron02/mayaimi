@@ -1,0 +1,36 @@
+{
+  "roles": {
+    "engineer": {
+      "name": "Engineer",
+      "primary": "repairs and maintains gear; patches hull damage",
+      "effects": {
+        "loyal": "faster repairs; small chance to restore a damaged fitting mid-fight",
+        "steady": "normal repairs",
+        "uneasy": "slower repairs; chance a repair fails",
+        "hostile": "may sabotage a fitting or abandon a repair, then leave"
+      }
+    },
+    "pilot": {
+      "name": "Pilot",
+      "primary": "steers the vessel, manages altitude and wind",
+      "effects": {
+        "loyal": "+5% speed in favorable wind; smoother altitude changes",
+        "steady": "normal handling",
+        "uneasy": "-5% speed; occasional delayed response",
+        "hostile": "may refuse a risky climb or dive, then leave"
+      }
+    },
+    "general": {
+      "name": "General Crew",
+      "primary": "can fill any open slot",
+      "effects": {
+        "loyal": "base thresholds only",
+        "steady": "base thresholds only",
+        "uneasy": "base thresholds only",
+        "hostile": "base thresholds only"
+      }
+    }
+  },
+  "first_session_roles": ["engineer", "pilot", "general"],
+  "later_roles": ["gunner", "lookout", "quartermaster", "dragon_handler"]
+}
