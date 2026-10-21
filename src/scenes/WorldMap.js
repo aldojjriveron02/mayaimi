@@ -60,26 +60,14 @@ export class WorldMap extends Phaser.Scene {
     const controls = addCameraControls(this, cam, { minZoom: 0.4, maxZoom: 3.0 });
     controls.setBounds({ x: 0, y: 0, w: MW, h: MH });
 
-    // --- Master game clock + debug label ---
+    // --- Master game clock (single source of time; HUD only reads it) ---
     this.clock = new GameClock();
-    this.clockLabel = this.add.text(12, 12, this.clock.format(), {
-      fontFamily: 'monospace', fontSize: '16px', color: '#ffe9b0',
-      backgroundColor: 'rgba(0,0,0,0.55)', padding: { x: 8, y: 6 }
-    }).setScrollFactor(0).setDepth(100);
 
-    // Small controls hint, fades away.
-    const hint = this.add.text(12, 44, 'Drag to pan · Pinch to zoom', {
-      fontFamily: 'monospace', fontSize: '13px', color: '#cfe3c0',
-      backgroundColor: 'rgba(0,0,0,0.45)', padding: { x: 8, y: 6 }
-    }).setScrollFactor(0).setDepth(100);
-    this.tweens.add({ targets: hint, alpha: 0, delay: 4000, duration: 1200 });
+    // --- HUD: interface layer on top, own camera, never zooms/scrolls ---
+    this.scene.launch('HUD', { clock: this.clock });
   }
 
   update(_time, delta) {
-    const before = this.clock.gameMinutes;
     this.clock.update(delta);
-    if (this.clock.gameMinutes !== before) {
-      this.clockLabel.setText('🕐 ' + this.clock.format());
-    }
   }
 }
