@@ -87,5 +87,5 @@ export function addCameraControls(scene, cam, options = {}) {
     clampCam();
   });
 
-  return { setBounds };
+  return { setBounds, refresh: clampCam };
 }

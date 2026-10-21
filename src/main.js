@@ -1,21 +1,34 @@
 import { WorldMap } from './scenes/WorldMap.js';
+import { DPR, gamePixelSize } from './systems/display.js';
 
+// Canvas is sized in DEVICE pixels (window size x DPR) and shown at CSS
+// size via zoom 1/DPR — this is what makes rendering actually sharp.
+const startSize = gamePixelSize();
 const config = {
   type: Phaser.AUTO,
   parent: 'game',
   backgroundColor: '#0b1220',
-  // Render at the device's real pixel density (capped at 2x: 3x costs
-  // too much fill-rate on phones for no visible gain at game-view distance).
-  resolution: Math.min(window.devicePixelRatio || 1, 2),
   scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: '100%',
-    height: '100%'
+    mode: Phaser.Scale.NONE,
+    width: startSize.w,
+    height: startSize.h,
+    zoom: 1 / DPR
   },
   render: { antialias: true, roundPixels: false },
   disableContextMenu: true,
   scene: [WorldMap]
 };
 
-new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+// Re-fit the canvas in device pixels on window resize / rotation.
+let resizeTimer = 0;
+const refit = () => {
+  const { w, h } = gamePixelSize();
+  if (w !== game.scale.width || h !== game.scale.height) game.scale.resize(w, h);
+};
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(refit, 120);
+});
+window.addEventListener('orientationchange', () => setTimeout(refit, 300));

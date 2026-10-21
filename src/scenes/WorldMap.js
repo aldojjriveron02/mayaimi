@@ -1,5 +1,6 @@
 import { GameClock } from '../systems/clock.js';
 import { addCameraControls } from '../systems/cameraControls.js';
+import { DPR } from '../systems/display.js';
 import { HUD } from './HUD.js';
 
 /** Deterministic PRNG so the placeholder map is stable. */
@@ -55,11 +56,20 @@ export class WorldMap extends Phaser.Scene {
     }
 
     // --- Camera: touch drag pan + pinch zoom, bounded to the map ---
+    // Base zoom = DPR so the view shows the same world area as before,
+    // but drawn at full device-pixel density. Pinch multiplies on top.
     const cam = this.cameras.main;
     cam.setBounds(0, 0, MW, MH);
     cam.centerOn(MW / 2, MH / 2);
-    const controls = addCameraControls(this, cam, { minZoom: 0.4, maxZoom: 3.0 });
+    cam.setZoom(DPR);
+    const controls = addCameraControls(this, cam, { minZoom: 0.4 * DPR, maxZoom: 3.0 * DPR });
     controls.setBounds({ x: 0, y: 0, w: MW, h: MH });
+
+    // Keep the camera viewport matched to the canvas on resize/rotation.
+    this.scale.on('resize', (gameSize) => {
+      cam.setViewport(0, 0, gameSize.width, gameSize.height);
+      controls.refresh();
+    });
 
     // --- Master game clock (single source of time; HUD only reads it) ---
     this.clock = new GameClock();
