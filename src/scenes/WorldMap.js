@@ -1,0 +1,82 @@
+import { GameClock } from '../systems/clock.js';
+import { addCameraControls } from '../systems/cameraControls.js';
+
+/** Deterministic PRNG so the placeholder map is stable. */
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export class WorldMap extends Phaser.Scene {
+  constructor() {
+    super('WorldMap');
+  }
+
+  preload() {
+    this.load.json('regions', 'src/data/regions.json');
+  }
+
+  create() {
+    const regions = this.cache.json.get('regions');
+    const T = regions.tileSize;
+    const MW = regions.width * T, MH = regions.height * T;
+
+    // --- Placeholder map: one Graphics object, colored tiles ---
+    const rand = mulberry32(20261020);
+    const grass = [0x5d8a4a, 0x548142, 0x639254, 0x4f7d3e];
+    const g = this.add.graphics();
+
+    const inEllipse = (tx, ty, f) => {
+      const dx = (tx - f.cx) / f.rx, dy = (ty - f.cy) / f.ry;
+      return dx * dx + dy * dy <= 1;
+    };
+
+    for (let ty = 0; ty < regions.height; ty++) {
+      for (let tx = 0; tx < regions.width; tx++) {
+        let color = grass[Math.floor(rand() * grass.length)];
+        for (const f of regions.features) {
+          if (!inEllipse(tx, ty, f)) continue;
+          if (f.type === 'lake') color = 0x3f7fbf;
+          else if (f.type === 'dirt') color = 0x9a7b4f;
+        }
+        g.fillStyle(color, 1);
+        g.fillRect(tx * T, ty * T, T, T);
+        g.lineStyle(1, 0x000000, 0.08);
+        g.strokeRect(tx * T, ty * T, T, T);
+      }
+    }
+
+    // --- Camera: touch drag pan + pinch zoom, bounded to the map ---
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, MW, MH);
+    cam.centerOn(MW / 2, MH / 2);
+    const controls = addCameraControls(this, cam, { minZoom: 0.4, maxZoom: 3.0 });
+    controls.setBounds({ x: 0, y: 0, w: MW, h: MH });
+
+    // --- Master game clock + debug label ---
+    this.clock = new GameClock();
+    this.clockLabel = this.add.text(12, 12, this.clock.format(), {
+      fontFamily: 'monospace', fontSize: '16px', color: '#ffe9b0',
+      backgroundColor: 'rgba(0,0,0,0.55)', padding: { x: 8, y: 6 }
+    }).setScrollFactor(0).setDepth(100);
+
+    // Small controls hint, fades away.
+    const hint = this.add.text(12, 44, 'Drag to pan · Pinch to zoom', {
+      fontFamily: 'monospace', fontSize: '13px', color: '#cfe3c0',
+      backgroundColor: 'rgba(0,0,0,0.45)', padding: { x: 8, y: 6 }
+    }).setScrollFactor(0).setDepth(100);
+    this.tweens.add({ targets: hint, alpha: 0, delay: 4000, duration: 1200 });
+  }
+
+  update(_time, delta) {
+    const before = this.clock.gameMinutes;
+    this.clock.update(delta);
+    if (this.clock.gameMinutes !== before) {
+      this.clockLabel.setText('🕐 ' + this.clock.format());
+    }
+  }
+}
